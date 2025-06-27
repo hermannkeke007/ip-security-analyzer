@@ -48,6 +48,8 @@ gunicorn --bind 0.0.0.0:5000 app:app
 
 L'application sera accessible sur `http://localhost:5000`
 
+https://ip-security-analyzer-production.up.railway.app/
+
 
    ```
 
