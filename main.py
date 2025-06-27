@@ -14,7 +14,17 @@ app = Flask(__name__)
 
 class IPAnalyzer:
     def __init__(self):
-        self.openai_client = openai.OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+        # Initialiser OpenAI seulement si la clé existe
+        openai_key = os.getenv('OPENAI_API_KEY')
+        if openai_key and openai_key.strip():
+            try:
+                self.openai_client = openai.OpenAI(api_key=openai_key)
+            except Exception as e:
+                print(f"Erreur initialisation OpenAI: {e}")
+                self.openai_client = None
+        else:
+            self.openai_client = None
+        
         self.abuseipdb_key = os.getenv('ABUSEIPDB_API_KEY')
         self.shodan_key = os.getenv('SHODAN_API_KEY')
     
@@ -78,8 +88,8 @@ class IPAnalyzer:
     
     def generate_ai_report(self, ip_data):
         """Génère un rapport compréhensible avec OpenAI"""
-        if not os.getenv('OPENAI_API_KEY'):
-            return "Rapport IA non disponible - clé API manquante"
+        if not self.openai_client:
+            return "Rapport IA non disponible - fonctionnalité désactivée ou clé API invalide"
         
         try:
             # Préparer les données pour l'IA
